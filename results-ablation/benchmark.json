@@ -1,0 +1,1027 @@
+{
+  "mode": "offline",
+  "token_method": "ceil(stripped characters / 4) + 4 per message",
+  "quality_method": "three-level recall * (0.8 + 0.2 * min(1, 400/answer_chars)); not an LLM judge",
+  "recall_method": "0 = no matches; 0.5 = some matches; 1 = all matches; macro average over questions",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "openai_store": false,
+  "ablation_included": true,
+  "summary_cost": "Offline extractive CPU work; no LLM tokens. Report chars separately.",
+  "suites": {
+    "Standard Benchmark": {
+      "rows": [
+        {
+          "agent_name": "Baseline",
+          "agent_tokens_only": 1349,
+          "prompt_tokens_processed": 24185,
+          "recall_score": 0.0,
+          "response_quality": 0.0,
+          "memory_growth_bytes": 0,
+          "compactions": 0
+        },
+        {
+          "agent_name": "Advanced",
+          "agent_tokens_only": 1350,
+          "prompt_tokens_processed": 32966,
+          "recall_score": 1.0,
+          "response_quality": 1.0,
+          "memory_growth_bytes": 1499,
+          "compactions": 0
+        },
+        {
+          "agent_name": "Advanced without compact",
+          "agent_tokens_only": 1350,
+          "prompt_tokens_processed": 32966,
+          "recall_score": 1.0,
+          "response_quality": 1.0,
+          "memory_growth_bytes": 1499,
+          "compactions": 0
+        },
+        {
+          "agent_name": "Advanced strict confidence",
+          "agent_tokens_only": 1353,
+          "prompt_tokens_processed": 25359,
+          "recall_score": 0.0,
+          "response_quality": 0.0,
+          "memory_growth_bytes": 0,
+          "compactions": 0
+        }
+      ],
+      "recall_details": {
+        "Baseline": [
+          {
+            "conversation": "conv-01",
+            "thread": "recall:0:0:conv-01",
+            "question": "Mình tên gì và đồ uống yêu thích là gì?",
+            "expected": [
+              "DũngCT",
+              "cà phê sữa đá"
+            ],
+            "answer": "Tên: chưa có thông tin. Đồ uống yêu thích: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-02",
+            "thread": "recall:1:0:conv-02",
+            "question": "Nhắc lại style trả lời mình thích và đồ uống yêu thích của mình.",
+            "expected": [
+              "ngắn gọn",
+              "cà phê sữa đá"
+            ],
+            "answer": "Đồ uống yêu thích: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-02",
+            "thread": "recall:1:1:conv-02",
+            "question": "Tên mình là gì và mình thích kiểu trả lời như thế nào?",
+            "expected": [
+              "DũngCT",
+              "ngắn gọn"
+            ],
+            "answer": "Tên: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-03",
+            "thread": "recall:2:0:conv-03",
+            "question": "Hiện tại mình đang ở đâu?",
+            "expected": [
+              "Huế"
+            ],
+            "answer": "Nơi ở hiện tại: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-04",
+            "thread": "recall:3:0:conv-04",
+            "question": "Món ăn yêu thích của mình là gì và mình nuôi con gì?",
+            "expected": [
+              "mì Quảng",
+              "corgi"
+            ],
+            "answer": "Món ăn yêu thích: chưa có thông tin. Thú cưng: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-05",
+            "thread": "recall:4:0:conv-05",
+            "question": "Bạn biết DũngCT là ai không? Hãy nhắc ngắn gọn tên và mối quan tâm chính của mình.",
+            "expected": [
+              "DũngCT",
+              "Python",
+              "AI"
+            ],
+            "answer": "Tên: chưa có thông tin. Mối quan tâm: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-06",
+            "thread": "recall:5:0:conv-06",
+            "question": "Hiện tại mình làm nghề gì và mình còn ở Huế không?",
+            "expected": [
+              "MLOps engineer",
+              "Huế"
+            ],
+            "answer": "Nơi ở hiện tại: chưa có thông tin. Nghề nghiệp hiện tại: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-06",
+            "thread": "recall:5:1:conv-06",
+            "question": "Nếu phải chọn giữa nghề cũ và nghề mới, nghề hiện tại của mình là gì?",
+            "expected": [
+              "MLOps engineer"
+            ],
+            "answer": "Nghề nghiệp hiện tại: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-07",
+            "thread": "recall:6:0:conv-07",
+            "question": "Mình thích style trả lời như thế nào và hiện đang ở đâu?",
+            "expected": [
+              "ngắn gọn",
+              "Huế"
+            ],
+            "answer": "Nơi ở hiện tại: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-08",
+            "thread": "recall:7:0:conv-08",
+            "question": "Đồ uống và món ăn yêu thích của mình là gì?",
+            "expected": [
+              "cà phê sữa đá",
+              "mì Quảng"
+            ],
+            "answer": "Đồ uống yêu thích: chưa có thông tin. Món ăn yêu thích: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-08",
+            "thread": "recall:7:1:conv-08",
+            "question": "Hiện tại mình đang ở đâu và mình nuôi con gì?",
+            "expected": [
+              "Huế",
+              "corgi"
+            ],
+            "answer": "Nơi ở hiện tại: chưa có thông tin. Thú cưng: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-09",
+            "thread": "recall:8:0:conv-09",
+            "question": "Tóm tắt ngắn về mình: tên, nghề nghiệp hiện tại và hai mối quan tâm kỹ thuật chính.",
+            "expected": [
+              "DũngCT",
+              "MLOps engineer",
+              "Python",
+              "AI"
+            ],
+            "answer": "Tên: chưa có thông tin. Nghề nghiệp hiện tại: chưa có thông tin. Mối quan tâm: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-10",
+            "thread": "recall:9:0:conv-10",
+            "question": "Nhắc lại giúp mình: tên, nơi ở hiện tại, nghề nghiệp hiện tại, đồ uống yêu thích và style trả lời mình thích.",
+            "expected": [
+              "DũngCT",
+              "Huế",
+              "MLOps engineer",
+              "cà phê sữa đá",
+              "ngắn gọn"
+            ],
+            "answer": "Tên: chưa có thông tin. Nơi ở hiện tại: chưa có thông tin. Nghề nghiệp hiện tại: chưa có thông tin. Đồ uống yêu thích: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-10",
+            "thread": "recall:9:1:conv-10",
+            "question": "Nhắc lại giúp mình: tên, món ăn yêu thích và mình nuôi con gì.",
+            "expected": [
+              "DũngCT",
+              "mì Quảng",
+              "corgi"
+            ],
+            "answer": "Tên: chưa có thông tin. Món ăn yêu thích: chưa có thông tin. Thú cưng: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          }
+        ],
+        "Advanced": [
+          {
+            "conversation": "conv-01",
+            "thread": "recall:0:0:conv-01",
+            "question": "Mình tên gì và đồ uống yêu thích là gì?",
+            "expected": [
+              "DũngCT",
+              "cà phê sữa đá"
+            ],
+            "answer": "Tên: DũngCT. Đồ uống yêu thích: cà phê sữa đá.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-02",
+            "thread": "recall:1:0:conv-02",
+            "question": "Nhắc lại style trả lời mình thích và đồ uống yêu thích của mình.",
+            "expected": [
+              "ngắn gọn",
+              "cà phê sữa đá"
+            ],
+            "answer": "- Đồ uống yêu thích: cà phê sữa đá.\n- Style trả lời: ngắn gọn, bullet, có ví dụ thực tế.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-02",
+            "thread": "recall:1:1:conv-02",
+            "question": "Tên mình là gì và mình thích kiểu trả lời như thế nào?",
+            "expected": [
+              "DũngCT",
+              "ngắn gọn"
+            ],
+            "answer": "- Tên: DũngCT.\n- Style trả lời: ngắn gọn, bullet, có ví dụ thực tế.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-03",
+            "thread": "recall:2:0:conv-03",
+            "question": "Hiện tại mình đang ở đâu?",
+            "expected": [
+              "Huế"
+            ],
+            "answer": "- Nơi ở hiện tại: Huế.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-04",
+            "thread": "recall:3:0:conv-04",
+            "question": "Món ăn yêu thích của mình là gì và mình nuôi con gì?",
+            "expected": [
+              "mì Quảng",
+              "corgi"
+            ],
+            "answer": "- Món ăn yêu thích: mì Quảng.\n- Thú cưng: một bé corgi tên Bơ.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-05",
+            "thread": "recall:4:0:conv-05",
+            "question": "Bạn biết DũngCT là ai không? Hãy nhắc ngắn gọn tên và mối quan tâm chính của mình.",
+            "expected": [
+              "DũngCT",
+              "Python",
+              "AI"
+            ],
+            "answer": "- Tên: DũngCT.\n- Mối quan tâm: Python, AI agent và benchmark memory.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-06",
+            "thread": "recall:5:0:conv-06",
+            "question": "Hiện tại mình làm nghề gì và mình còn ở Huế không?",
+            "expected": [
+              "MLOps engineer",
+              "Huế"
+            ],
+            "answer": "- Nơi ở hiện tại: Huế.\n- Nghề nghiệp hiện tại: MLOps engineer.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-06",
+            "thread": "recall:5:1:conv-06",
+            "question": "Nếu phải chọn giữa nghề cũ và nghề mới, nghề hiện tại của mình là gì?",
+            "expected": [
+              "MLOps engineer"
+            ],
+            "answer": "- Nghề nghiệp hiện tại: MLOps engineer.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-07",
+            "thread": "recall:6:0:conv-07",
+            "question": "Mình thích style trả lời như thế nào và hiện đang ở đâu?",
+            "expected": [
+              "ngắn gọn",
+              "Huế"
+            ],
+            "answer": "- Nơi ở hiện tại: Huế.\n- Style trả lời: ngắn gọn, so sánh trade-off, bullet, có ví dụ thực chiến.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-08",
+            "thread": "recall:7:0:conv-08",
+            "question": "Đồ uống và món ăn yêu thích của mình là gì?",
+            "expected": [
+              "cà phê sữa đá",
+              "mì Quảng"
+            ],
+            "answer": "- Đồ uống yêu thích: cà phê sữa đá.\n- Món ăn yêu thích: mì Quảng.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-08",
+            "thread": "recall:7:1:conv-08",
+            "question": "Hiện tại mình đang ở đâu và mình nuôi con gì?",
+            "expected": [
+              "Huế",
+              "corgi"
+            ],
+            "answer": "- Nơi ở hiện tại: Huế.\n- Thú cưng: một bé corgi tên Bơ.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-09",
+            "thread": "recall:8:0:conv-09",
+            "question": "Tóm tắt ngắn về mình: tên, nghề nghiệp hiện tại và hai mối quan tâm kỹ thuật chính.",
+            "expected": [
+              "DũngCT",
+              "MLOps engineer",
+              "Python",
+              "AI"
+            ],
+            "answer": "- Tên: DũngCT.\n- Nghề nghiệp hiện tại: MLOps engineer.\n- Mối quan tâm: Python, AI ứng dụng và cách trình bày có ví dụ thực chiến.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-10",
+            "thread": "recall:9:0:conv-10",
+            "question": "Nhắc lại giúp mình: tên, nơi ở hiện tại, nghề nghiệp hiện tại, đồ uống yêu thích và style trả lời mình thích.",
+            "expected": [
+              "DũngCT",
+              "Huế",
+              "MLOps engineer",
+              "cà phê sữa đá",
+              "ngắn gọn"
+            ],
+            "answer": "- Tên: DũngCT.\n- Nơi ở hiện tại: Huế.\n- Nghề nghiệp hiện tại: MLOps engineer.\n- Đồ uống yêu thích: cà phê sữa đá.\n- Style trả lời: ngắn gọn, so sánh trade-off, bullet, có ví dụ thực chiến.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-10",
+            "thread": "recall:9:1:conv-10",
+            "question": "Nhắc lại giúp mình: tên, món ăn yêu thích và mình nuôi con gì.",
+            "expected": [
+              "DũngCT",
+              "mì Quảng",
+              "corgi"
+            ],
+            "answer": "- Tên: DũngCT.\n- Món ăn yêu thích: mì Quảng.\n- Thú cưng: một bé corgi tên Bơ.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          }
+        ],
+        "Advanced without compact": [
+          {
+            "conversation": "conv-01",
+            "thread": "recall:0:0:conv-01",
+            "question": "Mình tên gì và đồ uống yêu thích là gì?",
+            "expected": [
+              "DũngCT",
+              "cà phê sữa đá"
+            ],
+            "answer": "Tên: DũngCT. Đồ uống yêu thích: cà phê sữa đá.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-02",
+            "thread": "recall:1:0:conv-02",
+            "question": "Nhắc lại style trả lời mình thích và đồ uống yêu thích của mình.",
+            "expected": [
+              "ngắn gọn",
+              "cà phê sữa đá"
+            ],
+            "answer": "- Đồ uống yêu thích: cà phê sữa đá.\n- Style trả lời: ngắn gọn, bullet, có ví dụ thực tế.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-02",
+            "thread": "recall:1:1:conv-02",
+            "question": "Tên mình là gì và mình thích kiểu trả lời như thế nào?",
+            "expected": [
+              "DũngCT",
+              "ngắn gọn"
+            ],
+            "answer": "- Tên: DũngCT.\n- Style trả lời: ngắn gọn, bullet, có ví dụ thực tế.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-03",
+            "thread": "recall:2:0:conv-03",
+            "question": "Hiện tại mình đang ở đâu?",
+            "expected": [
+              "Huế"
+            ],
+            "answer": "- Nơi ở hiện tại: Huế.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-04",
+            "thread": "recall:3:0:conv-04",
+            "question": "Món ăn yêu thích của mình là gì và mình nuôi con gì?",
+            "expected": [
+              "mì Quảng",
+              "corgi"
+            ],
+            "answer": "- Món ăn yêu thích: mì Quảng.\n- Thú cưng: một bé corgi tên Bơ.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-05",
+            "thread": "recall:4:0:conv-05",
+            "question": "Bạn biết DũngCT là ai không? Hãy nhắc ngắn gọn tên và mối quan tâm chính của mình.",
+            "expected": [
+              "DũngCT",
+              "Python",
+              "AI"
+            ],
+            "answer": "- Tên: DũngCT.\n- Mối quan tâm: Python, AI agent và benchmark memory.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-06",
+            "thread": "recall:5:0:conv-06",
+            "question": "Hiện tại mình làm nghề gì và mình còn ở Huế không?",
+            "expected": [
+              "MLOps engineer",
+              "Huế"
+            ],
+            "answer": "- Nơi ở hiện tại: Huế.\n- Nghề nghiệp hiện tại: MLOps engineer.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-06",
+            "thread": "recall:5:1:conv-06",
+            "question": "Nếu phải chọn giữa nghề cũ và nghề mới, nghề hiện tại của mình là gì?",
+            "expected": [
+              "MLOps engineer"
+            ],
+            "answer": "- Nghề nghiệp hiện tại: MLOps engineer.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-07",
+            "thread": "recall:6:0:conv-07",
+            "question": "Mình thích style trả lời như thế nào và hiện đang ở đâu?",
+            "expected": [
+              "ngắn gọn",
+              "Huế"
+            ],
+            "answer": "- Nơi ở hiện tại: Huế.\n- Style trả lời: ngắn gọn, so sánh trade-off, bullet, có ví dụ thực chiến.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-08",
+            "thread": "recall:7:0:conv-08",
+            "question": "Đồ uống và món ăn yêu thích của mình là gì?",
+            "expected": [
+              "cà phê sữa đá",
+              "mì Quảng"
+            ],
+            "answer": "- Đồ uống yêu thích: cà phê sữa đá.\n- Món ăn yêu thích: mì Quảng.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-08",
+            "thread": "recall:7:1:conv-08",
+            "question": "Hiện tại mình đang ở đâu và mình nuôi con gì?",
+            "expected": [
+              "Huế",
+              "corgi"
+            ],
+            "answer": "- Nơi ở hiện tại: Huế.\n- Thú cưng: một bé corgi tên Bơ.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-09",
+            "thread": "recall:8:0:conv-09",
+            "question": "Tóm tắt ngắn về mình: tên, nghề nghiệp hiện tại và hai mối quan tâm kỹ thuật chính.",
+            "expected": [
+              "DũngCT",
+              "MLOps engineer",
+              "Python",
+              "AI"
+            ],
+            "answer": "- Tên: DũngCT.\n- Nghề nghiệp hiện tại: MLOps engineer.\n- Mối quan tâm: Python, AI ứng dụng và cách trình bày có ví dụ thực chiến.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-10",
+            "thread": "recall:9:0:conv-10",
+            "question": "Nhắc lại giúp mình: tên, nơi ở hiện tại, nghề nghiệp hiện tại, đồ uống yêu thích và style trả lời mình thích.",
+            "expected": [
+              "DũngCT",
+              "Huế",
+              "MLOps engineer",
+              "cà phê sữa đá",
+              "ngắn gọn"
+            ],
+            "answer": "- Tên: DũngCT.\n- Nơi ở hiện tại: Huế.\n- Nghề nghiệp hiện tại: MLOps engineer.\n- Đồ uống yêu thích: cà phê sữa đá.\n- Style trả lời: ngắn gọn, so sánh trade-off, bullet, có ví dụ thực chiến.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "conv-10",
+            "thread": "recall:9:1:conv-10",
+            "question": "Nhắc lại giúp mình: tên, món ăn yêu thích và mình nuôi con gì.",
+            "expected": [
+              "DũngCT",
+              "mì Quảng",
+              "corgi"
+            ],
+            "answer": "- Tên: DũngCT.\n- Món ăn yêu thích: mì Quảng.\n- Thú cưng: một bé corgi tên Bơ.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          }
+        ],
+        "Advanced strict confidence": [
+          {
+            "conversation": "conv-01",
+            "thread": "recall:0:0:conv-01",
+            "question": "Mình tên gì và đồ uống yêu thích là gì?",
+            "expected": [
+              "DũngCT",
+              "cà phê sữa đá"
+            ],
+            "answer": "Tên: chưa có thông tin. Đồ uống yêu thích: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-02",
+            "thread": "recall:1:0:conv-02",
+            "question": "Nhắc lại style trả lời mình thích và đồ uống yêu thích của mình.",
+            "expected": [
+              "ngắn gọn",
+              "cà phê sữa đá"
+            ],
+            "answer": "Đồ uống yêu thích: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-02",
+            "thread": "recall:1:1:conv-02",
+            "question": "Tên mình là gì và mình thích kiểu trả lời như thế nào?",
+            "expected": [
+              "DũngCT",
+              "ngắn gọn"
+            ],
+            "answer": "Tên: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-03",
+            "thread": "recall:2:0:conv-03",
+            "question": "Hiện tại mình đang ở đâu?",
+            "expected": [
+              "Huế"
+            ],
+            "answer": "Nơi ở hiện tại: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-04",
+            "thread": "recall:3:0:conv-04",
+            "question": "Món ăn yêu thích của mình là gì và mình nuôi con gì?",
+            "expected": [
+              "mì Quảng",
+              "corgi"
+            ],
+            "answer": "Món ăn yêu thích: chưa có thông tin. Thú cưng: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-05",
+            "thread": "recall:4:0:conv-05",
+            "question": "Bạn biết DũngCT là ai không? Hãy nhắc ngắn gọn tên và mối quan tâm chính của mình.",
+            "expected": [
+              "DũngCT",
+              "Python",
+              "AI"
+            ],
+            "answer": "Tên: chưa có thông tin. Mối quan tâm: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-06",
+            "thread": "recall:5:0:conv-06",
+            "question": "Hiện tại mình làm nghề gì và mình còn ở Huế không?",
+            "expected": [
+              "MLOps engineer",
+              "Huế"
+            ],
+            "answer": "Nơi ở hiện tại: chưa có thông tin. Nghề nghiệp hiện tại: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-06",
+            "thread": "recall:5:1:conv-06",
+            "question": "Nếu phải chọn giữa nghề cũ và nghề mới, nghề hiện tại của mình là gì?",
+            "expected": [
+              "MLOps engineer"
+            ],
+            "answer": "Nghề nghiệp hiện tại: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-07",
+            "thread": "recall:6:0:conv-07",
+            "question": "Mình thích style trả lời như thế nào và hiện đang ở đâu?",
+            "expected": [
+              "ngắn gọn",
+              "Huế"
+            ],
+            "answer": "Nơi ở hiện tại: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-08",
+            "thread": "recall:7:0:conv-08",
+            "question": "Đồ uống và món ăn yêu thích của mình là gì?",
+            "expected": [
+              "cà phê sữa đá",
+              "mì Quảng"
+            ],
+            "answer": "Đồ uống yêu thích: chưa có thông tin. Món ăn yêu thích: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-08",
+            "thread": "recall:7:1:conv-08",
+            "question": "Hiện tại mình đang ở đâu và mình nuôi con gì?",
+            "expected": [
+              "Huế",
+              "corgi"
+            ],
+            "answer": "Nơi ở hiện tại: chưa có thông tin. Thú cưng: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-09",
+            "thread": "recall:8:0:conv-09",
+            "question": "Tóm tắt ngắn về mình: tên, nghề nghiệp hiện tại và hai mối quan tâm kỹ thuật chính.",
+            "expected": [
+              "DũngCT",
+              "MLOps engineer",
+              "Python",
+              "AI"
+            ],
+            "answer": "Tên: chưa có thông tin. Nghề nghiệp hiện tại: chưa có thông tin. Mối quan tâm: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-10",
+            "thread": "recall:9:0:conv-10",
+            "question": "Nhắc lại giúp mình: tên, nơi ở hiện tại, nghề nghiệp hiện tại, đồ uống yêu thích và style trả lời mình thích.",
+            "expected": [
+              "DũngCT",
+              "Huế",
+              "MLOps engineer",
+              "cà phê sữa đá",
+              "ngắn gọn"
+            ],
+            "answer": "Tên: chưa có thông tin. Nơi ở hiện tại: chưa có thông tin. Nghề nghiệp hiện tại: chưa có thông tin. Đồ uống yêu thích: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "conv-10",
+            "thread": "recall:9:1:conv-10",
+            "question": "Nhắc lại giúp mình: tên, món ăn yêu thích và mình nuôi con gì.",
+            "expected": [
+              "DũngCT",
+              "mì Quảng",
+              "corgi"
+            ],
+            "answer": "Tên: chưa có thông tin. Món ăn yêu thích: chưa có thông tin. Thú cưng: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          }
+        ]
+      },
+      "summary_chars_processed": {
+        "Advanced": 0,
+        "Advanced without compact": 0,
+        "Advanced strict confidence": 0
+      },
+      "actual_api_usage": {
+        "Baseline": {
+          "calls": 0,
+          "calls_with_missing_usage": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "total_tokens": 0
+        },
+        "Advanced": {
+          "calls": 0,
+          "calls_with_missing_usage": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "total_tokens": 0
+        },
+        "Advanced without compact": {
+          "calls": 0,
+          "calls_with_missing_usage": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "total_tokens": 0
+        },
+        "Advanced strict confidence": {
+          "calls": 0,
+          "calls_with_missing_usage": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "total_tokens": 0
+        }
+      }
+    },
+    "Long-Context Stress Benchmark": {
+      "rows": [
+        {
+          "agent_name": "Baseline",
+          "agent_tokens_only": 305,
+          "prompt_tokens_processed": 24248,
+          "recall_score": 0.0,
+          "response_quality": 0.0,
+          "memory_growth_bytes": 0,
+          "compactions": 0
+        },
+        {
+          "agent_name": "Advanced",
+          "agent_tokens_only": 340,
+          "prompt_tokens_processed": 14494,
+          "recall_score": 1.0,
+          "response_quality": 1.0,
+          "memory_growth_bytes": 1360,
+          "compactions": 3
+        },
+        {
+          "agent_name": "Advanced without compact",
+          "agent_tokens_only": 340,
+          "prompt_tokens_processed": 25495,
+          "recall_score": 1.0,
+          "response_quality": 1.0,
+          "memory_growth_bytes": 1360,
+          "compactions": 0
+        },
+        {
+          "agent_name": "Advanced strict confidence",
+          "agent_tokens_only": 282,
+          "prompt_tokens_processed": 13437,
+          "recall_score": 0.0,
+          "response_quality": 0.0,
+          "memory_growth_bytes": 0,
+          "compactions": 3
+        }
+      ],
+      "recall_details": {
+        "Baseline": [
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:0:stress-01",
+            "question": "Sang thread mới rồi, nhắc lại giúp mình tên, nghề nghiệp hiện tại, nơi ở hiện tại và style trả lời mình thích.",
+            "expected": [
+              "DũngCT Stress",
+              "MLOps engineer",
+              "Đà Nẵng",
+              "3 bullet"
+            ],
+            "answer": "Tên: chưa có thông tin. Nơi ở hiện tại: chưa có thông tin. Nghề nghiệp hiện tại: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:1:stress-01",
+            "question": "Nếu ai đó nhắc Huế, Hà Nội hay product manager, đâu mới là nghề nghiệp và nơi ở hiện tại của mình?",
+            "expected": [
+              "MLOps engineer",
+              "Đà Nẵng"
+            ],
+            "answer": "Nơi ở hiện tại: chưa có thông tin. Nghề nghiệp hiện tại: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:2:stress-01",
+            "question": "Nhắc lại giúp mình tên và style trả lời mình thích trong stress test này.",
+            "expected": [
+              "DũngCT Stress",
+              "3 bullet"
+            ],
+            "answer": "Tên: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          }
+        ],
+        "Advanced": [
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:0:stress-01",
+            "question": "Sang thread mới rồi, nhắc lại giúp mình tên, nghề nghiệp hiện tại, nơi ở hiện tại và style trả lời mình thích.",
+            "expected": [
+              "DũngCT Stress",
+              "MLOps engineer",
+              "Đà Nẵng",
+              "3 bullet"
+            ],
+            "answer": "- Tên: DũngCT Stress. Nơi ở hiện tại: Đà Nẵng.\n- Nghề nghiệp hiện tại: MLOps engineer.\n- Style trả lời: ngắn gọn, so sánh trade-off, 3 bullet, có ví dụ thực chiến.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:1:stress-01",
+            "question": "Nếu ai đó nhắc Huế, Hà Nội hay product manager, đâu mới là nghề nghiệp và nơi ở hiện tại của mình?",
+            "expected": [
+              "MLOps engineer",
+              "Đà Nẵng"
+            ],
+            "answer": "- Nơi ở hiện tại: Đà Nẵng.\n- Nghề nghiệp hiện tại: MLOps engineer.\n- Bạn có thể bổ sung thông tin nếu cần.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:2:stress-01",
+            "question": "Nhắc lại giúp mình tên và style trả lời mình thích trong stress test này.",
+            "expected": [
+              "DũngCT Stress",
+              "3 bullet"
+            ],
+            "answer": "- Tên: DũngCT Stress.\n- Style trả lời: ngắn gọn, so sánh trade-off, 3 bullet, có ví dụ thực chiến.\n- Bạn có thể bổ sung thông tin nếu cần.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          }
+        ],
+        "Advanced without compact": [
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:0:stress-01",
+            "question": "Sang thread mới rồi, nhắc lại giúp mình tên, nghề nghiệp hiện tại, nơi ở hiện tại và style trả lời mình thích.",
+            "expected": [
+              "DũngCT Stress",
+              "MLOps engineer",
+              "Đà Nẵng",
+              "3 bullet"
+            ],
+            "answer": "- Tên: DũngCT Stress. Nơi ở hiện tại: Đà Nẵng.\n- Nghề nghiệp hiện tại: MLOps engineer.\n- Style trả lời: ngắn gọn, so sánh trade-off, 3 bullet, có ví dụ thực chiến.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:1:stress-01",
+            "question": "Nếu ai đó nhắc Huế, Hà Nội hay product manager, đâu mới là nghề nghiệp và nơi ở hiện tại của mình?",
+            "expected": [
+              "MLOps engineer",
+              "Đà Nẵng"
+            ],
+            "answer": "- Nơi ở hiện tại: Đà Nẵng.\n- Nghề nghiệp hiện tại: MLOps engineer.\n- Bạn có thể bổ sung thông tin nếu cần.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          },
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:2:stress-01",
+            "question": "Nhắc lại giúp mình tên và style trả lời mình thích trong stress test này.",
+            "expected": [
+              "DũngCT Stress",
+              "3 bullet"
+            ],
+            "answer": "- Tên: DũngCT Stress.\n- Style trả lời: ngắn gọn, so sánh trade-off, 3 bullet, có ví dụ thực chiến.\n- Bạn có thể bổ sung thông tin nếu cần.",
+            "recall": 1.0,
+            "quality_proxy": 1.0
+          }
+        ],
+        "Advanced strict confidence": [
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:0:stress-01",
+            "question": "Sang thread mới rồi, nhắc lại giúp mình tên, nghề nghiệp hiện tại, nơi ở hiện tại và style trả lời mình thích.",
+            "expected": [
+              "DũngCT Stress",
+              "MLOps engineer",
+              "Đà Nẵng",
+              "3 bullet"
+            ],
+            "answer": "Tên: chưa có thông tin. Nơi ở hiện tại: chưa có thông tin. Nghề nghiệp hiện tại: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:1:stress-01",
+            "question": "Nếu ai đó nhắc Huế, Hà Nội hay product manager, đâu mới là nghề nghiệp và nơi ở hiện tại của mình?",
+            "expected": [
+              "MLOps engineer",
+              "Đà Nẵng"
+            ],
+            "answer": "Nơi ở hiện tại: chưa có thông tin. Nghề nghiệp hiện tại: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          },
+          {
+            "conversation": "stress-01",
+            "thread": "recall:0:2:stress-01",
+            "question": "Nhắc lại giúp mình tên và style trả lời mình thích trong stress test này.",
+            "expected": [
+              "DũngCT Stress",
+              "3 bullet"
+            ],
+            "answer": "Tên: chưa có thông tin. Style trả lời: chưa có thông tin.",
+            "recall": 0.0,
+            "quality_proxy": 0.0
+          }
+        ]
+      },
+      "summary_chars_processed": {
+        "Advanced": 3630,
+        "Advanced without compact": 0,
+        "Advanced strict confidence": 3630
+      },
+      "actual_api_usage": {
+        "Baseline": {
+          "calls": 0,
+          "calls_with_missing_usage": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "total_tokens": 0
+        },
+        "Advanced": {
+          "calls": 0,
+          "calls_with_missing_usage": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "total_tokens": 0
+        },
+        "Advanced without compact": {
+          "calls": 0,
+          "calls_with_missing_usage": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "total_tokens": 0
+        },
+        "Advanced strict confidence": {
+          "calls": 0,
+          "calls_with_missing_usage": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "total_tokens": 0
+        }
+      }
+    }
+  }
+}

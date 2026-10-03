@@ -1,0 +1,31 @@
+{
+  "calls": 268,
+  "all_response_ids_present": true,
+  "all_usage_present": true,
+  "groups": [
+    {
+      "suite": "Standard Benchmark",
+      "agent": "Baseline",
+      "calls": 115,
+      "usage_matches_log": true
+    },
+    {
+      "suite": "Standard Benchmark",
+      "agent": "Advanced",
+      "calls": 115,
+      "usage_matches_log": true
+    },
+    {
+      "suite": "Long-Context Stress Benchmark",
+      "agent": "Baseline",
+      "calls": 19,
+      "usage_matches_log": true
+    },
+    {
+      "suite": "Long-Context Stress Benchmark",
+      "agent": "Advanced",
+      "calls": 19,
+      "usage_matches_log": true
+    }
+  ]
+}

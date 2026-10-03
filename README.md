@@ -1,5 +1,26 @@
 # Phase 2, Track 3, Day 17: Memory Systems for AI Agent
 
+## Bản bài làm đã hoàn thiện
+
+File phân tích Bước 8/bonus dành cho bài nộp: [STEP8.md](STEP8.md). Yêu cầu nộp GitHub/VLearn và checklist xem [SUBMISSION.md](SUBMISSION.md). Benchmark mặc định in đúng hai dòng Baseline/Advanced mỗi bảng; chạy thêm `--ablation` để có các thí nghiệm đối chứng.
+
+Hướng dẫn cấu hình đủ sáu provider và log usage thực: [PROVIDERS.md](PROVIDERS.md). Đóng gói bản nộp sạch bằng `python scripts/package_submission.py`; script kiểm tra lại benchmark/tests trong bản sao không có `.env` hay `state/`.
+
+Code trong `src/` đã được triển khai, có benchmark tái lập, tests và bonus confidence threshold, structured entity extraction, conflict handling. Đọc [REPORT.md](REPORT.md) để xem phương pháp và phân tích, [REPORT_LIVE.md](REPORT_LIVE.md) để xem kết quả API thật và [AUDIT.md](AUDIT.md) để đối chiếu bằng chứng; kết quả thực nằm trong [results/benchmark.md](results/benchmark.md), kèm JSON chi tiết và hồ sơ mẫu.
+
+Chạy nhanh trên Windows, từ thư mục gốc (Python >= 3.11):
+
+```powershell
+python -m pip install -r requirements.txt
+python -X utf8 src/benchmark.py
+python -m pytest src/test_agents.py -v
+python -X utf8 src/demo.py
+```
+
+Offline không cần API key hay SDK provider. Cài `requirements-live.txt` và cấu hình theo `.env.example` nếu muốn mở rộng live. Benchmark chỉ gọi LLM thật khi thêm `--live`; kết quả offline là mô phỏng memory với token ước lượng và quality heuristic. Hướng dẫn triển khai nằm tại [src/README.md](src/README.md).
+
+Phần bên dưới giữ nội dung đề bài gốc; các mô tả scaffold/TODO là trạng thái lúc giao bài.
+
 Trong Day 17 này, các bạn sẽ tập trung vào một câu hỏi rất thực tế: làm sao để AI agent **không chỉ trả lời tốt trong một lượt chat**, mà còn **nhớ đúng thông tin quan trọng qua nhiều phiên làm việc** mà vẫn kiểm soát được chi phí token.
 
 Trong bài lab này, các bạn sẽ xây dựng và so sánh hai agent:

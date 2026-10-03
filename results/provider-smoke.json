@@ -1,0 +1,29 @@
+{
+  "openai": {
+    "status": "success",
+    "model": "gpt-4o-mini",
+    "answer": "OK",
+    "actual_usage": {
+      "calls": 1,
+      "calls_with_missing_usage": 0,
+      "input_tokens": 18,
+      "output_tokens": 1,
+      "total_tokens": 19
+    },
+    "ids": [
+      {
+        "provider_response_id": "chatcmpl-EUwlhs8JLqlLpYXJw24JUi0voTQrC",
+        "langchain_message_id": "lc_run--01a10291-80fe-74f2-8e17-121af614e13e-0"
+      }
+    ]
+  },
+  "openrouter": {
+    "status": "chat_failed",
+    "error_type": "UnauthorizedResponseError",
+    "http_status": 401,
+    "auth_key_http_status": 200,
+    "direct_chat_http_status": 401,
+    "direct_chat_error_message": "User not found.",
+    "updated_key_retested": true
+  }
+}

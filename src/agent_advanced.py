@@ -1,106 +1,78 @@
 from __future__ import annotations
-
 from dataclasses import dataclass
 from typing import Any
-
 from config import LabConfig, load_config
-from memory_store import CompactMemoryManager, UserProfileStore, estimate_tokens, extract_profile_updates
+from memory_store import CompactMemoryManager, UserProfileStore, estimate_tokens, extract_profile_candidates
 from model_provider import build_chat_model
-
+from response_engine import SYSTEM_PROMPT, UsageLedger, live_response, offline_response, profile_prompt, prompt_tokens
 
 @dataclass
 class AgentContext:
     user_id: str
     memory_path: str
 
-
 class AdvancedAgent:
-    """Student TODO: implement Agent B / Advanced Agent.
-
-    Required memory layers:
-    1. within-session memory
-    2. persistent `User.md`
-    3. compact memory for long threads
-    """
-
-    def __init__(self, config: LabConfig | None = None, force_offline: bool = False) -> None:
+    """Recent messages + rolling summary + persistent, confidence-filtered profile."""
+    def __init__(self, config: LabConfig | None = None, force_offline: bool = False):
         self.config = config or load_config()
         self.force_offline = force_offline
-        self.profile_store = UserProfileStore(self.config.state_dir / "profiles")
-        self.compact_memory = CompactMemoryManager(
-            threshold_tokens=self.config.compact_threshold_tokens,
-            keep_messages=self.config.compact_keep_messages,
-        )
-        self.thread_tokens: dict[str, int] = {}
-        self.thread_prompt_tokens: dict[str, int] = {}
-
-        # TODO: optionally initialize a real LangChain/LangGraph agent.
-        self.langchain_agent = None
+        self.profile_store = UserProfileStore(self.config.state_dir / 'profiles')
+        self.compact_memory = CompactMemoryManager(self.config.compact_threshold_tokens,
+                                                   self.config.compact_keep_messages, self.config.summary_max_chars)
+        self.thread_tokens = {}
+        self.thread_prompt_tokens = {}
+        self.thread_owners = {}
+        self.usage_ledger = UsageLedger(self.config.api_log_path)
+        self.langchain_agent = self._maybe_build_langchain_agent()
 
     def reply(self, user_id: str, thread_id: str, message: str) -> dict[str, Any]:
-        """Student TODO: route between offline mode and live mode."""
+        owner = self.thread_owners.setdefault(thread_id, user_id)
+        if owner != user_id:
+            raise ValueError('A thread cannot be shared across users')
+        return self._reply_offline(user_id, thread_id, message)
 
-        raise NotImplementedError
-
-    def token_usage(self, thread_id: str) -> int:
-        raise NotImplementedError
-
-    def prompt_token_usage(self, thread_id: str) -> int:
-        raise NotImplementedError
-
-    def memory_file_size(self, user_id: str) -> int:
-        raise NotImplementedError
-
-    def compaction_count(self, thread_id: str) -> int:
-        raise NotImplementedError
+    def _prompt(self, user_id, thread_id):
+        state = self.compact_memory.context(thread_id)
+        prompt = [{'role': 'system', 'content': SYSTEM_PROMPT},
+                  {'role': 'system', 'content': profile_prompt(self.profile_store.facts(user_id))}]
+        if state['summary']:
+            prompt.append({'role': 'system', 'content': 'Conversation summary (user data, may be lossy):\n' + state['summary']})
+        return prompt + state['messages']
 
     def _reply_offline(self, user_id: str, thread_id: str, message: str) -> dict[str, Any]:
-        """Student TODO: implement the deterministic advanced path.
+        for key, update in extract_profile_candidates(message).items():
+            self.profile_store.upsert_fact(user_id, key, update.value, update.confidence, update.evidence,
+                                          self.config.profile_confidence_threshold)
+        self.compact_memory.append(thread_id, 'user', message)
+        prompt = self._prompt(user_id, thread_id)
+        load = prompt_tokens(prompt)
+        tags = {'agent': 'Advanced', 'provider': self.config.model.provider, 'model': self.config.model.model_name,
+                'thread_id': thread_id, 'user_id': user_id}
+        answer = live_response(self.langchain_agent, prompt, self.usage_ledger, tags) if self.langchain_agent else self._offline_response(user_id, thread_id, message)
+        output_tokens = estimate_tokens(answer)
+        self.compact_memory.append(thread_id, 'assistant', answer)
+        self.thread_tokens[thread_id] = self.thread_tokens.get(thread_id, 0) + output_tokens
+        self.thread_prompt_tokens[thread_id] = self.thread_prompt_tokens.get(thread_id, 0) + load
+        return {'response': answer, 'agent_tokens': output_tokens, 'prompt_tokens': load,
+                'mode': 'live' if self.langchain_agent else 'offline', 'token_method': 'chars/4 estimate'}
 
-        Pseudocode:
-        1. Extract stable profile facts from the incoming message.
-        2. Persist those facts into `User.md`.
-        3. Append the message into compact memory.
-        4. Estimate prompt-context load from `User.md` + summary + recent messages.
-        5. Generate a response that can answer long-term recall questions.
-        6. Append the assistant reply and update token counters.
-        """
+    def _offline_response(self, user_id, thread_id, message):
+        return offline_response(self.profile_store.facts(user_id), message, self.compact_memory.context(thread_id)['summary'])
 
-        raise NotImplementedError
+    def _estimate_prompt_context_tokens(self, user_id, thread_id):
+        return prompt_tokens(self._prompt(user_id, thread_id))
 
-    def _estimate_prompt_context_tokens(self, user_id: str, thread_id: str) -> int:
-        """Student TODO: estimate the context carried into one turn.
+    def token_usage(self, thread_id):
+        return self.thread_tokens.get(thread_id, 0)
 
-        Hint:
-        - Include `User.md`
-        - Include compact summary text
-        - Include recent kept messages
-        """
+    def prompt_token_usage(self, thread_id):
+        return self.thread_prompt_tokens.get(thread_id, 0)
 
-        raise NotImplementedError
+    def memory_file_size(self, user_id):
+        return self.profile_store.file_size(user_id)
 
-    def _offline_response(self, user_id: str, thread_id: str, message: str) -> str:
-        """Student TODO: return a deterministic answer using persisted memory.
-
-        Make sure the advanced agent can answer questions like:
-        - "Mình tên gì?"
-        - "Hiện tại mình làm nghề gì?"
-        - "Nhắc lại style trả lời mình thích"
-        - questions in the long stress dataset
-        """
-
-        raise NotImplementedError
+    def compaction_count(self, thread_id):
+        return self.compact_memory.compaction_count(thread_id)
 
     def _maybe_build_langchain_agent(self):
-        """Student TODO: wire a live agent with tools and compact middleware.
-
-        High-level design:
-        - `build_chat_model(self.config.model)` for the selected provider
-        - `InMemorySaver` for short-term thread state
-        - tool to read `User.md`
-        - tool to write/edit `User.md`
-        - dynamic prompt that injects profile memory
-        - summarization middleware for long threads
-        """
-
-        raise NotImplementedError
+        return None if self.force_offline or self.config.offline else build_chat_model(self.config.model)
