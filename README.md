@@ -1,14 +1,12 @@
 # Phase 2, Track 3, Day 17: Memory Systems for AI Agent
 
-## Bản bài làm đã hoàn thiện
+## Bài làm và cách chạy
 
-File phân tích Bước 8/bonus dành cho bài nộp: [STEP8.md](STEP8.md). Yêu cầu nộp GitHub/VLearn và checklist xem [SUBMISSION.md](SUBMISSION.md). Benchmark mặc định in đúng hai dòng Baseline/Advanced mỗi bảng; chạy thêm `--ablation` để có các thí nghiệm đối chứng.
+**Sinh viên:** Lê Thị Thùy Trang — **MSSV:** 2A202602678.
 
-Hướng dẫn cấu hình đủ sáu provider và log usage thực: [PROVIDERS.md](PROVIDERS.md). Đóng gói bản nộp sạch bằng `python scripts/package_submission.py`; script kiểm tra lại benchmark/tests trong bản sao không có `.env` hay `state/`.
+[STEP8.md](STEP8.md) trả lời bốn câu hỏi Bước 8 và phân tích ba bonus. [REPORT.md](REPORT.md) trình bày thiết kế, thực nghiệm offline, đối chứng và kết quả API thật qua OpenAI/OpenRouter. Bảng offline nằm trong [results/benchmark.md](results/benchmark.md), kèm JSON chi tiết và hồ sơ mẫu.
 
-Code trong `src/` đã được triển khai, có benchmark tái lập, tests và bonus confidence threshold, structured entity extraction, conflict handling. Đọc [REPORT.md](REPORT.md) để xem phương pháp và phân tích, [REPORT_LIVE.md](REPORT_LIVE.md) để xem kết quả API thật và [AUDIT.md](AUDIT.md) để đối chiếu bằng chứng; kết quả thực nằm trong [results/benchmark.md](results/benchmark.md), kèm JSON chi tiết và hồ sơ mẫu.
-
-Chạy nhanh trên Windows, từ thư mục gốc (Python >= 3.11):
+Chạy từ thư mục gốc trên Windows, Python >= 3.11:
 
 ```powershell
 python -m pip install -r requirements.txt
@@ -17,7 +15,55 @@ python -m pytest src/test_agents.py -v
 python -X utf8 src/demo.py
 ```
 
-Offline không cần API key hay SDK provider. Cài `requirements-live.txt` và cấu hình theo `.env.example` nếu muốn mở rộng live. Benchmark chỉ gọi LLM thật khi thêm `--live`; kết quả offline là mô phỏng memory với token ước lượng và quality heuristic. Hướng dẫn triển khai nằm tại [src/README.md](src/README.md).
+Offline không cần API key hay SDK provider. Benchmark mặc định in hai bảng, mỗi bảng hai dòng Baseline/Advanced với sáu chỉ số. Thêm `--ablation` để chạy đối chứng. Token offline là ước lượng, quality là heuristic; usage thực được báo riêng khi chạy live. [src/README.md](src/README.md) mô tả các module và giao diện agent.
+
+## Cấu hình sáu provider và chạy live
+
+Cài `requirements-live.txt`, sao chép `.env.example` thành `.env` và đặt key/model phù hợp. SDK chỉ được import khi bật live. `requirements-live.lock.txt` ghi phiên bản môi trường đã kiểm chứng.
+
+| Provider | Key/env | Model mặc định | Endpoint |
+|---|---|---|---|
+| openai | OPENAI_API_KEY | gpt-4o-mini | SDK mặc định, tùy chọn OPENAI_BASE_URL |
+| custom | CUSTOM_API_KEY, CUSTOM_BASE_URL bắt buộc | local-model | OpenAI-compatible URL do người dùng đặt |
+| gemini | GEMINI_API_KEY hoặc GOOGLE_API_KEY | gemini-2.5-flash | SDK Gemini, tùy chọn GEMINI_BASE_URL |
+| anthropic | ANTHROPIC_API_KEY | claude-sonnet-4-5 | SDK Anthropic, tùy chọn ANTHROPIC_BASE_URL |
+| ollama | Không cần key; OLLAMA_BASE_URL tùy chọn | llama3.2 | Ollama server local |
+| openrouter | OPENROUTER_API_KEY | openai/gpt-4o-mini | OpenRouter SDK, tùy chọn OPENROUTER_BASE_URL |
+
+Đặt `LLM_PROVIDER`, `LLM_MODEL` trong `.env` cho mặc định chung. Có thể đặt `<PROVIDER>_MODEL` riêng. `LLM_API_KEY`/`LLM_BASE_URL` là override cho provider mặc định; khi đổi provider bằng CLI, code lấy key/model tương ứng, không dùng nhầm key/model OpenAI cho OpenRouter. `JUDGE_PROVIDER`, `JUDGE_MODEL`, `JUDGE_API_KEY` được hỗ trợ nhưng hiện benchmark quality vẫn là heuristic.
+
+CLI không cần sửa `.env` để đổi provider:
+
+```powershell
+python src/benchmark.py --live --provider openai --model gpt-4o-mini --store --output-dir results-openai-new
+python src/benchmark.py --live --provider openrouter --model openai/gpt-4o-mini --output-dir results-openrouter-new
+python src/benchmark.py --live --provider gemini --output-dir results-gemini-new
+python src/benchmark.py --live --provider anthropic --output-dir results-anthropic-new
+python src/benchmark.py --live --provider ollama --model llama3.2 --output-dir results-ollama-new
+python src/benchmark.py --live --provider custom --model your-model --output-dir results-custom-new
+```
+
+Nếu SDK/provider chưa cài, dùng `python -m pip install -r requirements-live.txt`; hoặc dùng lockfile cho đúng phiên bản kiểm chứng. Với Ollama phải có server và model tương ứng. Custom cần URL và key theo server. Không gọi API thật cho provider thiếu credentials/server; không tự chuyển API lỗi thành offline.
+
+## Log và usage
+
+Live ghi `api-calls.jsonl` trong output dir: timestamp UTC, agent, provider, model, thread/user ID, messages, response, provider response ID nếu có, LangChain message ID, input/output/total usage thực. Metadata usage thiếu được đánh dấu `null` và đếm riêng, không giả làm 0. Log chỉ ghi payload benchmark và thông tin định danh call; không serialize key hay SDK config.
+
+Bảng sáu cột của đề vẫn dùng cùng estimator input/output cho hai agent. Markdown/JSON có thêm bảng `Actual API usage` riêng lấy từ provider, tránh nhầm với usage ước lượng. Mỗi run chọn output directory mới; nếu đã có JSONL, CLI báo lỗi để tránh trộn evidence cũ vào run mới. Các suite hoàn thành được lưu ngay để giữ kết quả khi suite sau lỗi.
+
+OpenAI `--store` gửi `store=True` và metadata `lab=day17-memory`, `purpose=benchmark`. Xem **Logs → Completions**, chọn đúng project/model; không tìm các call Chat Completions trong tab Responses. OpenRouter có dashboard activity của OpenRouter; `--store` chỉ áp dụng OpenAI, không truyền option không hỗ trợ sang các SDK còn lại.
+
+## Chuẩn bị bài nộp
+
+Bài cá nhân, nộp **link repo GitHub trên VLearn**, đặt tên theo mẫu `KX-DAY17-HoVaTen-MSSV`. Repo này là [K4-DAY17-LeThiThuyTrang-2A202602678](https://github.com/Sukemcute/K4-DAY17-LeThiThuyTrang-2A202602678). Nội dung chính gồm `src/`, dữ liệu gốc trong `data/`, `README.md` và `STEP8.md`. `REPORT.md` cùng các thư mục kết quả bổ sung giải thích và bằng chứng.
+
+Bonus được chọn gồm confidence threshold, trích xuất có cấu trúc và xử lý mâu thuẫn. Bước 8 giải thích vấn đề, cải thiện và rủi ro của từng hướng. Live là phần mở rộng; phần offline vẫn chạy khi không có key. OpenAI và OpenRouter đã chạy thật; Gemini, Anthropic, Custom và Ollama mới được kiểm tra khởi tạo SDK, cần key/server tương ứng để gọi qua mạng.
+
+Chạy `python scripts/package_submission.py` để tạo ZIP sạch trong `dist/`. Script chọn các file cần nộp, kiểm tra không có key thật, rồi chạy benchmark và 49 tests trong bản sao không có `.env` hay state. Kết quả kiểm tra nằm trong `dist/verification.json`. Không nộp `.env`, API keys, `state/`, `.venv/`, `.agent/`, `.ai-log/` hoặc cache.
+
+Sau khi đưa phiên bản bài làm hiện tại lên GitHub mới lấy link nộp VLearn. Việc chuẩn bị ZIP chưa thực hiện push hoặc nộp trên hệ thống.
+
+## Đề bài gốc
 
 Phần bên dưới giữ nội dung đề bài gốc; các mô tả scaffold/TODO là trạng thái lúc giao bài.
 

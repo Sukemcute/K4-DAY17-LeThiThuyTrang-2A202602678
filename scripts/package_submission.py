@@ -10,7 +10,7 @@ import tempfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
-FILES = ['README.md','Guide.md','Rubric.md','STEP8.md','SUBMISSION.md','PROVIDERS.md','REPORT.md','REPORT_LIVE.md','AUDIT.md',
+FILES = ['README.md','Guide.md','Rubric.md','STEP8.md','REPORT.md',
          'requirements.txt','requirements-live.txt','requirements-live.lock.txt','.gitignore','.env.example']
 DIRECTORIES = ['src','data','scripts','results','results-ablation','results-openai-audit','results-openrouter-audit']
 ALLOWED_EXTENSIONS = {'.py','.md','.txt','.json','.jsonl'}

@@ -38,7 +38,7 @@ Cài `requirements-live.txt`, sao chép `.env.example` thành `.env`, đặt pro
 python -X utf8 src/benchmark.py --live --output-dir results-live
 ```
 
-Hướng dẫn sáu provider, chọn key/model theo provider, `--store` và log usage thực: xem `PROVIDERS.md` ở root. Mặc định chỉ so Baseline/Advanced; thêm `--ablation` khi muốn chạy hai biến thể đối chứng. Live chọn output directory mới cho mỗi lần chạy.
+Hướng dẫn sáu provider, chọn key/model theo provider, `--store` và log usage thực: xem [README ở root](../README.md). Mặc định chỉ so Baseline/Advanced; thêm `--ablation` khi muốn chạy hai biến thể đối chứng. Live chọn output directory mới cho mỗi lần chạy.
 
 Mặc định chạy Baseline và Advanced trên cả hai dataset (268 lượt gọi model). `--no-ablation` được giữ để tương thích lệnh cũ; chỉ thêm `--ablation` khi cần gọi thêm hai biến thể đối chứng.
 

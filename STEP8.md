@@ -2,7 +2,7 @@
 
 **Sinh viên:** Lê Thị Thùy Trang — **MSSV:** 2A202602678.
 
-Trong bài lab này, em so sánh hai cách quản lý bộ nhớ. Baseline giữ lịch sử theo từng thread. Advanced giữ thêm hồ sơ người dùng trong `User.md` và nén lịch sử khi hội thoại dài. Em sử dụng nguyên hai bộ dữ liệu của đề, cho hai agent nhận cùng đầu vào và bắt đầu từ trạng thái trống. Phân tích chính dưới đây dựa trên [kết quả offline](results/benchmark.json). Kết quả API thật được trình bày riêng trong [REPORT_LIVE.md](REPORT_LIVE.md).
+Trong bài lab này, em so sánh hai cách quản lý bộ nhớ. Baseline giữ lịch sử theo từng thread. Advanced giữ thêm hồ sơ người dùng trong `User.md` và nén lịch sử khi hội thoại dài. Em sử dụng nguyên hai bộ dữ liệu của đề, cho hai agent nhận cùng đầu vào và bắt đầu từ trạng thái trống. Phân tích chính dưới đây dựa trên [kết quả offline](results/benchmark.json). Kết quả API thật được trình bày riêng trong [REPORT.md](REPORT.md).
 
 ## 1. Vì sao Advanced nhớ chéo phiên tốt hơn Baseline?
 
